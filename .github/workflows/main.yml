@@ -26,13 +26,16 @@ jobs:
         with:
           node-version: 14.x
           check-latest: true
-      - run: |
+      - name: Install dependencies
+        run: |          
           cd client/
           npm ci
       
       # Generate static Nuxt site
       - name: Generate static site
-        run: npm run generate
+        run: |
+          cd client/
+          npm run generate
         
       # Commit dist/ contents to the gh-pages branch
       - name: Deploy to gh-pages
