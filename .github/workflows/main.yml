@@ -1,0 +1,43 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CD
+
+on:
+  push:
+    branches: 
+      - master
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout current branch
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+        
+      # Setup node
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          check-latest: true
+      - run: npm ci
+      
+      # Generate static Nuxt site
+      - name: Generate static site
+        run: npm run generate
+        
+      # Commit dist/ contents to the gh-pages branch
+      - name: Deploy to gh-pages
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: client/dist
+          CLEAN: true
+        
